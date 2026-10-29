@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: transporte_pg
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: transporte_db
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: transporte_redis
+    ports:
+      - "6379:6379"
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: transporte_mosquitto
+    ports:
+      - "1883:1883"
+    command: mosquitto -c /mosquitto-no-auth.conf
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: transporte_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  nginx:
+    image: nginx:alpine
+    container_name: transporte_nginx
+    ports:
+      - "8080:80"
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: transporte_sonarqube
+    ports:
+      - "9000:9000"

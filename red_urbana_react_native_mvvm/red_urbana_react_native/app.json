@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Red Urbana",
+    "slug": "red-urbana",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "cl.redurbana.app"
+    }
+  }
+}

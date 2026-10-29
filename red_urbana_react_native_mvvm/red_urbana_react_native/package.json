@@ -1,0 +1,31 @@
+{
+  "name": "red-urbana-react-native",
+  "version": "1.0.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-navigation/bottom-tabs": "latest",
+    "@react-navigation/native": "latest",
+    "@react-navigation/native-stack": "latest",
+    "expo": "latest",
+    "expo-status-bar": "latest",
+    "react": "latest",
+    "react-native": "latest",
+    "react-native-maps": "1.29.11",
+    "react-native-safe-area-context": "latest",
+    "react-native-screens": "latest",
+    "socket.io-client": "^4.8.4"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "typescript": "latest"
+  }
+}
