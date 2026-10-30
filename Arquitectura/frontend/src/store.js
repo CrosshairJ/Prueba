@@ -8,7 +8,8 @@ const socket = io("http://localhost:3000", {
   reconnectionDelay: 1000,
 });
 
-const RUTA_TALCA = [
+// Rutas
+export const RUTA_TALCA = [
   [-35.4264, -71.6660],
   [-35.4264, -71.6607],
   [-35.4264, -71.6554],
@@ -17,6 +18,45 @@ const RUTA_TALCA = [
   [-35.4230, -71.6480],
 ];
 
+export const CATALOGO_RUTAS = [
+  {
+    id: "101",
+    nombre: "Línea 101 — Troncal Centro",
+    estado: "Activa (En operación)",
+    color: "#38bdf8",
+    activa: true,
+    coordenadas: RUTA_TALCA,
+  },
+  {
+    id: "203",
+    nombre: "Línea 203 — Corredor Norte-Sur",
+    estado: "Futura integración",
+    color: "#a855f7",
+    activa: false,
+    coordenadas: [
+      [-35.4205, -71.6607],
+      [-35.4235, -71.6607],
+      [-35.4264, -71.6607],
+      [-35.4295, -71.6607],
+      [-35.4315, -71.6554],
+    ],
+  },
+  {
+    id: "305",
+    nombre: "Línea 305 — Variante Sur-Oriente",
+    estado: "Futura integración",
+    color: "#f59e0b",
+    activa: false,
+    coordenadas: [
+      [-35.4295, -71.6660],
+      [-35.4295, -71.6554],
+      [-35.4264, -71.6505],
+      [-35.4230, -71.6480],
+    ],
+  },
+];
+
+//Respaldo off
 let intervaloRespaldoOffline = null;
 let pasoLocal = 0;
 
@@ -59,6 +99,7 @@ const activarRespaldoOffline = (set, get) => {
   }, 1500);
 };
 
+// ZUSTAND 
 export const useTransporteStore = create(
   persist(
     (set, get) => {
@@ -89,6 +130,9 @@ export const useTransporteStore = create(
         usuario: null,
         error: null,
         bus: null,
+        filtroRuta: "todas",
+
+        setFiltroRuta: (filtroRuta) => set({ filtroRuta }),
 
         iniciarSesion: async (correo, clave) => {
           try {
@@ -129,11 +173,12 @@ export const useTransporteStore = create(
           set({ usuario: null, error: null, bus: null });
         },
 
+        // Posiciona el bus de prueba en el paradero inicial
         solicitarBusDesdeCelular: () => {
           const { usuario } = get();
           detenerRespaldoOffline();
           pasoLocal = 0;
-          const pasajero = usuario?.nombre || "Pasajero";
+          const pasajero = usuario?.nombre || "Felipe Pasajero";
 
           if (socket.connected) {
             socket.emit("solicitar_bus", { pasajero });
@@ -150,9 +195,10 @@ export const useTransporteStore = create(
           }
         },
 
+        // Inicia bus
         tomarBusDesdeCelular: () => {
-          const { usuario } = get();
-          const pasajero = usuario?.nombre || "Pasajero";
+          const { usuario, bus } = get();
+          const pasajero = bus?.pasajero || usuario?.nombre || "Felipe Pasajero";
 
           if (socket.connected) {
             socket.emit("tomar_bus", { pasajero });

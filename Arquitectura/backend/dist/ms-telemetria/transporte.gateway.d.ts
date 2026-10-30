@@ -1,14 +1,13 @@
-import { OnGatewayInit } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-export declare class TransporteGateway implements OnGatewayInit {
+import { TelemetriaService } from './telemetria.service';
+export declare class TransporteGateway {
+    private readonly telemetria;
     server: Server;
-    private redis;
-    private mqttClient;
-    private rabbitChannel;
     private intervalo;
     private pasoActual;
-    afterInit(): Promise<void>;
-    private sincronizarCapas;
+    constructor(telemetria: TelemetriaService);
+    private limpiarIntervalo;
+    private emitirYSincronizar;
     crearBus(data: {
         pasajero: string;
     }): Promise<void>;

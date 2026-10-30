@@ -1,31 +1,45 @@
 import { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, CircleMarker, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
-import { useTransporteStore } from './store';
+import { useTransporteStore, RUTA_TALCA, CATALOGO_RUTAS } from './store';
 
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+// Icono cuadrado 
+const crearIconoBusFlotante = (bus) => {
+  const enMovimiento = bus.estado?.toLowerCase().includes('movimiento');
+  const finalizado = bus.estado?.toLowerCase().includes('finalizado');
+  const claseEstado = finalizado ? 'fin' : enMovimiento ? 'movimiento' : 'espera';
 
-L.Marker.prototype.options.icon = L.icon({
-  iconUrl,
-  shadowUrl: iconShadow,
-  iconAnchor: [12, 41],
-});
-
-const RUTA_TALCA = [
-  [-35.4264, -71.6660],
-  [-35.4264, -71.6554],
-  [-35.4230, -71.6554],
-  [-35.4230, -71.6480],
-];
+  return L.divIcon({
+    className: 'contenedor-icono-bus',
+    iconSize: [200, 80],
+    iconAnchor: [22, 68],
+    html: `
+      <div class="wrapper-bus-mapa">
+        <div class="tarjeta-flotante-bus ${claseEstado}">
+          <div class="cabecera-flotante-bus">
+            <span class="id-bus-flotante">${bus.busId}</span>
+            <span class="badge-linea-bus">Línea 101</span>
+          </div>
+          <div class="estado-bus-flotante">${bus.estado}</div>
+          <div class="pasajero-bus-flotante">👤 ${bus.pasajero}</div>
+        </div>
+        <div class="cuadrado-icono-bus ${claseEstado}">
+          <span>🚌</span>
+        </div>
+      </div>
+    `,
+  });
+};
 
 export default function App() {
   const {
     usuario,
     error,
     bus,
+    filtroRuta,
+    setFiltroRuta,
     iniciarSesion,
     cerrarSesion,
     solicitarBusDesdeCelular,
@@ -113,6 +127,11 @@ export default function App() {
     usuario.rol?.toLowerCase().includes('operador') ||
     correo === 'conductor@app.cl';
 
+  const rutasVisibles =
+    esConductor && seccionActiva === 'rutas'
+      ? CATALOGO_RUTAS.filter((r) => filtroRuta === 'todas' || r.id === filtroRuta)
+      : CATALOGO_RUTAS.filter((r) => r.activa);
+
   return (
     <div className="layout-principal">
       <header className="barra-superior">
@@ -173,117 +192,135 @@ export default function App() {
               </button>
             </nav>
 
-            <div className="caja-testeo">
-              <span className="titulo-testeo">Testeo</span>
-              <button onClick={solicitarBusDesdeCelular} className="btn-testeo">
-                Pedir Bus
-              </button>
-              <button
-                onClick={tomarBusDesdeCelular}
-                disabled={!bus}
-                className="btn-testeo btn-testeo-iniciar"
-              >
-                Empezar Recorrido
-              </button>
+            {seccionActiva === 'rutas' && (
+              <div className="panel-catalogo-rutas">
+                <span className="titulo-seccion-lateral">Red de Rutas Talca</span>
+                <button
+                  className={filtroRuta === 'todas' ? 'item-ruta-btn activo' : 'item-ruta-btn'}
+                  onClick={() => setFiltroRuta('todas')}
+                >
+                  Ver todas las líneas (3)
+                </button>
+                {CATALOGO_RUTAS.map((r) => (
+                  <div
+                    key={r.id}
+                    onClick={() => setFiltroRuta(r.id)}
+                    className={`tarjeta-ruta-item ${filtroRuta === r.id ? 'seleccionada' : ''}`}
+                  >
+                    <div className="cabecera-ruta-item">
+                      <span className="indicador-color-ruta" style={{ backgroundColor: r.color }} />
+                      <strong>Línea {r.id}</strong>
+                      <span className={r.activa ? 'tag-ruta activa' : 'tag-ruta proyectada'}>
+                        {r.activa ? 'Activa' : 'Integración'}
+                      </span>
+                    </div>
+                    <p>{r.nombre}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="bloques-control-inferior">
+              <div className="caja-accion-conductor">
+                <span className="titulo-accion-rol">Control del Conductor</span>
+                <button
+                  onClick={tomarBusDesdeCelular}
+                  disabled={!bus}
+                  className="btn-conductor-iniciar"
+                >
+                  ▶ Iniciar Recorrido
+                </button>
+              </div>
+
+              {/* Cuadro bus de prueba */}
+              <div className="caja-testeo">
+                <span className="titulo-testeo">Poner bus de prueba</span>
+                <button onClick={solicitarBusDesdeCelular} className="btn-testeo">
+                  🚌 Poner bus de prueba
+                </button>
+              </div>
             </div>
           </aside>
         ) : (
           <aside className="panel-pasajero">
             <div className="tarjeta-movil">
               <h2>Mi Viaje</h2>
-              <p className="subtitulo-movil">Solicita una unidad cercana a tu ubicación actual</p>
+              <p className="subtitulo-movil">Aborda tu unidad asignada en el paradero</p>
 
               <div className="estado-viaje-pasajero">
                 {bus ? (
                   <>
                     <div className="fila-dato">
                       <span>Unidad asignada</span>
-                      <strong>{bus.busId}</strong>
+                      <strong>{bus.busId} (Línea 101)</strong>
                     </div>
                     <div className="fila-dato">
                       <span>Estado actual</span>
                       <strong className="texto-destacado">{bus.estado}</strong>
                     </div>
                     <div className="fila-dato">
-                      <span>Ubicación</span>
+                      <span>Ubicación GPS</span>
                       <strong>
                         {bus.lat.toFixed(4)}, {bus.lng.toFixed(4)}
                       </strong>
                     </div>
                   </>
                 ) : (
-                  <p className="sin-unidad">No tienes viajes activos en este momento.</p>
+                  <p className="sin-unidad">
+                    No hay buses en el paradero. Usa el cuadro inferior para poner un bus de prueba.
+                  </p>
                 )}
               </div>
 
+              {/* Pasajero */}
               <div className="acciones-pasajero">
-                <button onClick={solicitarBusDesdeCelular} className="btn-principal-pasajero">
-                  Pedir Bus
-                </button>
                 <button
                   onClick={tomarBusDesdeCelular}
                   disabled={!bus}
                   className="btn-secundario-pasajero"
                 >
-                  Abordar / Iniciar Viaje
+                  🎟️ Tomar Bus
                 </button>
               </div>
             </div>
 
             <div className="caja-testeo">
-              <span className="titulo-testeo">Testeo</span>
+              <span className="titulo-testeo">Poner bus de prueba</span>
               <button onClick={solicitarBusDesdeCelular} className="btn-testeo">
-                Pedir Bus
-              </button>
-              <button
-                onClick={tomarBusDesdeCelular}
-                disabled={!bus}
-                className="btn-testeo btn-testeo-iniciar"
-              >
-                Empezar Recorrido
+                🚌 Poner bus de prueba
               </button>
             </div>
           </aside>
         )}
 
         <main className="zona-mapa">
-          {esConductor && (
+          {esConductor && seccionActiva !== 'vehiculos' && (
             <div className="panel-flotante-info">
-              {seccionActiva === 'vehiculos' && (
-                <div>
-                  <h4>Monitoreo de Flota</h4>
-                  {bus ? (
-                    <p>
-                      Unidad <strong>{bus.busId}</strong> ({bus.estado}) — Pasajero:{' '}
-                      <strong>{bus.pasajero}</strong>
-                    </p>
-                  ) : (
-                    <p>Esperando activación de unidades en ruta.</p>
-                  )}
-                </div>
-              )}
               {seccionActiva === 'rutas' && (
                 <div>
-                  <h4>Trazado Troncal Talca</h4>
-                  <p>Ruta activa con circulación normal en corredor central.</p>
+                  <h4>Trazado Troncal y Líneas de Integración</h4>
+                  <p>
+                    <strong>Línea 101</strong> (continua azul) en operación activa.{' '}
+                    <strong>Líneas 203 y 305</strong> (segmentadas) listas para integración.
+                  </p>
                 </div>
               )}
               {seccionActiva === 'incidentes' && (
                 <div>
                   <h4>Control de Incidentes</h4>
-                  <p>Sin desvíos críticos reportados por los conductores.</p>
+                  <p>Sin desvíos críticos reportados por los conductores en la red.</p>
                 </div>
               )}
               {seccionActiva === 'alertas' && (
                 <div>
                   <h4>Centro de Alertas</h4>
-                  <p>Velocidad y frecuencia de unidades dentro del rango operativo.</p>
+                  <p>Velocidad y frecuencia de unidades dentro del rango operativo (&lt; 3s).</p>
                 </div>
               )}
               {seccionActiva === 'reportes' && (
                 <div>
                   <h4>Resumen Operativo</h4>
-                  <p>Módulo preparado para exportación de métricas de viaje.</p>
+                  <p>Sincronización híbrida PostgreSQL / SQLite / Redis operativa.</p>
                 </div>
               )}
             </div>
@@ -295,20 +332,44 @@ export default function App() {
             className="visor-leaflet"
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Polyline
-              positions={RUTA_TALCA}
-              pathOptions={{ color: '#38bdf8', weight: 5, opacity: 0.8 }}
-            />
+
+            {rutasVisibles.map((ruta) => (
+              <Polyline
+                key={ruta.id}
+                positions={ruta.coordenadas}
+                pathOptions={{
+                  color: ruta.color,
+                  weight: ruta.activa ? 5 : 4,
+                  opacity: ruta.activa ? 0.9 : 0.65,
+                  dashArray: ruta.activa ? undefined : '8, 8',
+                }}
+              >
+                <Tooltip sticky>
+                  <strong>{ruta.nombre}</strong> ({ruta.estado})
+                </Tooltip>
+              </Polyline>
+            ))}
+
+            {seccionActiva === 'rutas' &&
+              RUTA_TALCA.map((coord, idx) => (
+                <CircleMarker
+                  key={idx}
+                  center={coord}
+                  radius={5}
+                  pathOptions={{ color: '#0f172a', fillColor: '#38bdf8', fillOpacity: 1, weight: 2 }}
+                >
+                  <Tooltip direction="top">
+                    Paradero #{idx + 1} — Línea 101
+                  </Tooltip>
+                </CircleMarker>
+              ))}
+
+            
             {bus && (
-              <Marker position={[bus.lat, bus.lng]}>
-                <Popup>
-                  <strong>Unidad: {bus.busId}</strong>
-                  <br />
-                  Estado: {bus.estado}
-                  <br />
-                  Pasajero: {bus.pasajero}
-                </Popup>
-              </Marker>
+              <Marker
+                position={[bus.lat, bus.lng]}
+                icon={crearIconoBusFlotante(bus)}
+              />
             )}
           </MapContainer>
         </main>

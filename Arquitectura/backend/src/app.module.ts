@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { Usuario } from './usuario.entity';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TransporteGateway } from './transporte.gateway';
+import { Usuario } from './ms-identidad/usuario.entity';
+import { IdentidadModule } from './ms-identidad/identidad.module';
+import { TelemetriaModule } from './ms-telemetria/telemetria.module';
 
 @Module({
   imports: [
@@ -25,14 +23,8 @@ import { TransporteGateway } from './transporte.gateway';
       entities: [Usuario],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Usuario]),
-    TypeOrmModule.forFeature([Usuario], 'sqlite_local'),
-    JwtModule.register({
-      secret: 'secreto_jwt_2026',
-      signOptions: { expiresIn: '2h' },
-    }),
+    IdentidadModule,
+    TelemetriaModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, TransporteGateway],
 })
 export class AppModule {}

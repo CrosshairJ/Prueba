@@ -9,11 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const jwt_1 = require("@nestjs/jwt");
-const usuario_entity_1 = require("./usuario.entity");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
-const transporte_gateway_1 = require("./transporte.gateway");
+const usuario_entity_1 = require("./ms-identidad/usuario.entity");
+const identidad_module_1 = require("./ms-identidad/identidad.module");
+const telemetria_module_1 = require("./ms-telemetria/telemetria.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,15 +35,9 @@ exports.AppModule = AppModule = __decorate([
                 entities: [usuario_entity_1.Usuario],
                 synchronize: true,
             }),
-            typeorm_1.TypeOrmModule.forFeature([usuario_entity_1.Usuario]),
-            typeorm_1.TypeOrmModule.forFeature([usuario_entity_1.Usuario], 'sqlite_local'),
-            jwt_1.JwtModule.register({
-                secret: 'secreto_jwt_2026',
-                signOptions: { expiresIn: '2h' },
-            }),
+            identidad_module_1.IdentidadModule,
+            telemetria_module_1.TelemetriaModule,
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, transporte_gateway_1.TransporteGateway],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

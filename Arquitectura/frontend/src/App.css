@@ -240,7 +240,7 @@ body,
 }
 
 .menu-lateral {
-  width: 230px;
+  width: 260px;
   background-color: #161f30;
   border: 1px solid #26334d;
   border-radius: 12px;
@@ -248,13 +248,15 @@ body,
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 10px;
   flex-shrink: 0;
+  overflow-y: auto;
 }
 
 .lista-navegacion {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .item-nav {
@@ -262,13 +264,13 @@ body,
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
+  padding: 10px 14px;
   background: transparent;
   border: none;
   border-left: 3px solid transparent;
   border-radius: 8px;
   color: #94a3b8;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   text-align: left;
@@ -288,7 +290,138 @@ body,
 }
 
 .icono-nav {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
+}
+
+
+.panel-catalogo-rutas {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.titulo-seccion-lateral {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #38bdf8;
+  letter-spacing: 0.6px;
+}
+
+.item-ruta-btn {
+  padding: 6px 10px;
+  background-color: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.item-ruta-btn.activo {
+  background-color: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+.tarjeta-ruta-item {
+  padding: 8px;
+  border-radius: 7px;
+  background-color: #161f30;
+  border: 1px solid #26334d;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.tarjeta-ruta-item.seleccionada {
+  border-color: #38bdf8;
+}
+
+.cabecera-ruta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.indicador-color-ruta {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.tag-ruta {
+  margin-left: auto;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.tag-ruta.activa {
+  background-color: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.tag-ruta.proyectada {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.tarjeta-ruta-item p {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.bloques-control-inferior {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.caja-accion-conductor {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.titulo-accion-rol {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  text-align: center;
+}
+
+.btn-conductor-iniciar {
+  padding: 10px 12px;
+  background-color: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-conductor-iniciar:hover:not(:disabled) {
+  background-color: #0369a1;
+}
+
+.btn-conductor-iniciar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .panel-pasajero {
@@ -349,7 +482,7 @@ body,
 }
 
 .sin-unidad {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: #64748b;
   text-align: center;
   padding: 8px 0;
@@ -361,26 +494,16 @@ body,
   gap: 10px;
 }
 
-.btn-principal-pasajero {
-  padding: 12px;
-  background-color: #0f172a;
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
 .btn-secundario-pasajero {
   padding: 12px;
   background-color: #16a34a;
   color: #ffffff;
   border: none;
   border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.92rem;
   cursor: pointer;
+  transition: opacity 0.2s;
 }
 
 .btn-secundario-pasajero:disabled {
@@ -389,6 +512,7 @@ body,
   cursor: not-allowed;
 }
 
+/* Cuadro dedicado: Poner bus de prueba */
 .caja-testeo {
   background-color: #111827;
   border: 1px dashed #38bdf8;
@@ -409,29 +533,19 @@ body,
 }
 
 .btn-testeo {
-  padding: 9px 12px;
+  padding: 10px 12px;
   background-color: #1e293b;
   color: #f8fafc;
-  border: 1px solid #334155;
+  border: 1px solid #38bdf8;
   border-radius: 7px;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.btn-testeo:hover:not(:disabled) {
-  background-color: #334155;
-}
-
-.btn-testeo-iniciar {
+.btn-testeo:hover {
   background-color: #0284c7;
-  border-color: #0369a1;
-}
-
-.btn-testeo:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
 }
 
 .zona-mapa {
@@ -451,6 +565,98 @@ body,
   filter: brightness(0.75) invert(1) contrast(2.2) hue-rotate(200deg) saturate(0.4);
 }
 
+.contenedor-icono-bus {
+  background: transparent;
+  border: none;
+}
+
+.wrapper-bus-mapa {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.tarjeta-flotante-bus {
+  background-color: rgba(15, 23, 42, 0.95);
+  border: 1px solid #38bdf8;
+  border-left: 4px solid #38bdf8;
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 175px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  margin-bottom: 5px;
+  backdrop-filter: blur(4px);
+}
+
+.tarjeta-flotante-bus.movimiento {
+  border-color: #22c55e;
+  border-left-color: #22c55e;
+}
+
+.tarjeta-flotante-bus.fin {
+  border-color: #f59e0b;
+  border-left-color: #f59e0b;
+}
+
+.cabecera-flotante-bus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.id-bus-flotante {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.badge-linea-bus {
+  font-size: 0.65rem;
+  background-color: #1e293b;
+  color: #38bdf8;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.estado-bus-flotante {
+  font-size: 0.7rem;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.pasajero-bus-flotante {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.cuadrado-icono-bus {
+  width: 36px;
+  height: 36px;
+  background-color: #0f172a;
+  border: 2px solid #38bdf8;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+.cuadrado-icono-bus.movimiento {
+  border-color: #22c55e;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.7);
+}
+
+.cuadrado-icono-bus.fin {
+  border-color: #f59e0b;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
 .panel-flotante-info {
   position: absolute;
   top: 14px;
@@ -461,7 +667,7 @@ body,
   backdrop-filter: blur(6px);
   padding: 12px 18px;
   border-radius: 10px;
-  max-width: 420px;
+  max-width: 440px;
 }
 
 .panel-flotante-info h4 {
@@ -472,7 +678,7 @@ body,
 }
 
 .panel-flotante-info p {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: #e2e8f0;
 }
 
@@ -535,10 +741,6 @@ body,
     gap: 8px;
   }
 
-  .marca-sistema h1 {
-    font-size: 0.9rem;
-  }
-
   .cuerpo-dashboard {
     flex-direction: column-reverse;
   }
@@ -546,7 +748,7 @@ body,
   .menu-lateral,
   .panel-pasajero {
     width: 100%;
-    max-height: 46vh;
+    max-height: 48vh;
     overflow-y: auto;
   }
 
